@@ -11,6 +11,9 @@ setup(
     packages=find_packages(),
     install_requires=[
         'troposphere',
-        'tox'
+        'boto',
+        'tox',
+        'shovel',
+        'hypothesis'
     ]
 )

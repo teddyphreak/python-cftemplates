@@ -1,20 +1,28 @@
-from troposphere import ec2 as ec2
+from troposphere import ec2, Ref
 
-from cftemplates import identity
-from cftemplates import template
+from .utils import cftemplate
+from .utils import identity
 
 
 def vpc_template(description='Simple VPC template',
                  fn=identity):
-    def vpc(t):
-        t.add_resource(
-            ec2.VPC(
+    def base_vpc(t):
+
+        vpc = ec2.VPC(
                 "vpc",
-                CidrBlock='172.16.0.0/16'
+                CidrBlock='172.16.0.0/16',
+            )
+
+        t.add_resource(vpc)
+        t.add_output(
+            ec2.Output(
+                "vpcId",
+                Description='id of the new VPC',
+                Value=Ref(vpc)
             )
         )
         return t
-    return template(description, lambda x: fn(vpc(x)))
+    return cftemplate(description, lambda x: fn(base_vpc(x)))
 
 
 print(vpc_template("hello"))

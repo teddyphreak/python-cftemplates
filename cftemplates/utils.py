@@ -11,10 +11,11 @@ def merge_dict(o, m):
         if isinstance(io, dict) and isinstance(im, dict):
             merged_item = merge_dict(io, im)
         else:
-            merged_item = im or io
+            merged_item = im if im is not None else io
         return merged_item
-    keys = frozenset(o.keys() + m.keys())
-    return dict([[k, merge_items(o[k], m[k])] for k in keys])
+    keys = frozenset(list(o.keys()) + list(m.keys()))
+    merged = ((o and m) and dict([[k, merge_items(o.get(k, None), m.get(k, None))] for k in keys])) or o or m
+    return merged
 
 
 def cftemplate(description,

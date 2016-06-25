@@ -1,21 +1,28 @@
-from boto import cloudformation, ec2
+import boto3
 
 from cftemplates import config
 
 
-def validate_template(region, template):
-    return cloudformation.connect_to_region(region).validate_template(template)
+def validate_template(template, region):
+    assert region in regions()
+    return boto3.client('cloudformation', region_name=region).validate_template(TemplateBody=template)['Description']
 
 
 def regions():
-    blacklist = config
-    return [region.name for region in cloudformation.regions() if region.name not in config.value('regions', 'blacklist')]
+    return config.value('regions', 'all').split(',')
 
 
 def region_zones(region):
-    return [z.name for z in ec2.connect_to_region(region).get_all_zones()]
+    assert region in regions()
+    availability_zones = boto3.client('ec2', region_name=region).describe_availability_zones(
+        Filters=[{'Name': 'region-name', 'Values': [region]}]
+    )['AvailabilityZones']
+    return map(lambda x: x['ZoneName'], availability_zones)
 
 
 def zones():
-    return dict([[r, region_zones(r)] for r in regions()])
+    return dict(map(lambda r: [r, region_zones(r)], regions()))
 
+
+def test_regions():
+    return config.value('regions', 'test').split(',')

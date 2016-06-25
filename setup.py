@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='cftemplates',
-    version='0.1',
+    version='0.1.1',
     description='Cloudformation templates using troposphere',
     author='Ted Cook',
     author_email='teodoro.cook@gmail.com',
@@ -11,9 +11,16 @@ setup(
     packages=find_packages(),
     install_requires=[
         'troposphere',
-        'boto',
+    ],
+    tests_require=[
+        'boto3',
         'tox',
-        'shovel',
-        'hypothesis'
-    ]
+        'hypothesis',
+        'behave',
+        'pytest',
+        'ipython'
+    ],
+    entry_points={
+        'console_scripts': ['cftemplates=cftemplates:main']
+    }
 )

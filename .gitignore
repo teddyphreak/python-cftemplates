@@ -1,5 +1,9 @@
+dist/
 .idea/
 .tox/
 *.egg-info/
 build/
 *.template
+.cache/
+.hypothesis/
+**/__pycache__/
